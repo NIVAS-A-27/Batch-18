@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML/CSS/JS Assessment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #quizForm {
+            width: 80%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #questionContainer {
+            margin-bottom: 20px;
+        }
+
+        .questionDiv {
+            background-color: #e9ecef;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.1em;
+            margin: 0 0 10px;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        label {
+            margin-bottom: 5px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        button {
+            background-color: #28a745;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1em;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #timer {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #dc3545;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #result {
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #pieChartContainer {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form id="quizForm">
+        <div>
+            <h1>HTML/CSS/JS Assessment</h1>
+            <div id="timer">Time remaining: 5:00</div>
+        </div>
+        <div id="questionContainer"></div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <div id="result"></div>
+    <div id="pieChartContainer">
+        <canvas id="pieChart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const questions = [
+            {
+                question: "Which HTML element defines the structure of a webpage?",
+                options: [
+                    { text: "<body>", value: "correct" },
+                    { text: "<head>", value: "incorrect" },
+                    { text: "<footer>", value: "incorrect" }
+                ]
+            },
+            {
+                question: "How do you add a comment in CSS?",
+                options: [
+                    { text: "/* This is a comment */", value: "correct" },
+                    { text: "// This is a comment", value: "incorrect" },
+                    { text: "<!-- This is a comment -->", value: "incorrect" }
+                ]
+            },
+            {
+                question: "Which attribute is used to define inline styles in HTML?",
+                options: [
+                    { text: "style", value: "correct" },
+                    { text: "class", value: "incorrect" },
+                    { text: "id", value: "incorrect" }
+                ]
+            },
+            {
+                question: "What is the purpose of the 'DOMContentLoaded' event in JavaScript?",
+                options: [
+                    { text: "To execute code after the HTML document has been completely loaded and parsed", value: "correct" },
+                    { text: "To load external scripts", value: "incorrect" },
+                    { text: "To update the style of the page", value: "incorrect" }
+                ]
+            },
+            {
+                question: "How do you select an element with id 'myId' using JavaScript?",
+                options: [
+                    { text: "document.getElementById('myId')", value: "correct" },
+                    { text: "document.querySelector('#myId')", value: "incorrect" },
+                    { text: "document.getElementByClassName('myId')", value: "incorrect" }
+                ]
+            },
+            {
+                question: "Which CSS property is used to change the font size of an element?",
+                options: [
+                    { text: "font-size", value: "correct" },
+                    { text: "text-size", value: "incorrect" },
+                    { text: "font-style", value: "incorrect" }
+                ]
+            },
+            {
+                question: "How can you make a list of items with bullet points in HTML?",
+                options: [
+                    { text: "<ul>", value: "correct" },
+                    { text: "<ol>", value: "incorrect" },
+                    { text: "<dl>", value: "incorrect" }
+                ]
+            },
+            {
+                question: "What does the 'this' keyword refer to in JavaScript?",
+                options: [
+                    { text: "The object from which the function was called", value: "correct" },
+                    { text: "The function itself", value: "incorrect" },
+                    { text: "The global object", value: "incorrect" }
+                ]
+            },
+            {
+                question: "Which CSS property is used to change the color of text in CSS?",
+                options: [
+                    { text: "color", value: "correct" },
+                    { text: "text-color", value: "incorrect" },
+                    { text: "font-color", value: "incorrect" }
+                ]
+            },
+            {
+                question: "How do you include an external JavaScript file in an HTML document?",
+                options: [
+                    { text: "<script src='file.js'>/script>", value: "correct" },
+                    { text: "<js src='file.js'></js>", value: "incorrect" },
+                    { text: "<script href='file.js'/script>", value: "incorrect" }
+                ]
+            },
+            {
+                question: "Which method is used to add an element to the end of an array in JavaScript?",
+                options: [
+                    { text: "push()", value: "correct" },
+                    { text: "pop()", value: "incorrect" },
+                    { text: "shift()", value: "incorrect" }
+                ]
+            },
+            {
+                question: "What is the default value of the 'display' property in CSS for most HTML elements?",
+                options: [
+                    { text: "block", value: "correct" },
+                    { text: "inline", value: "incorrect" },
+                    { text: "none", value: "incorrect" }
+                ]
+            },
+            {
+                question: "How do you create a new HTML element using JavaScript?",
+                options: [
+                    { text: "document.createElement('tagName')", value: "correct" },
+                    { text: "document.addElement('tagName')", value: "incorrect" },
+                    { text: "document.newElement('tagName')", value: "incorrect" }
+                ]
+            }
+        ];
+
+        // Shuffle function
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Select 5 random questions
+        const selectedQuestions = shuffle([...questions]).slice(0, 5);
+
+        // Display questions
+        const questionContainer = document.getElementById("questionContainer");
+        selectedQuestions.forEach((question, index) => {
+            const questionDiv = document.createElement("div");
+            questionDiv.className = 'questionDiv';
+            questionDiv.id = `q${index + 1}`;
+            questionDiv.innerHTML = `
+                <p>${question.question}</p>
+                ${question.options.map((option, i) => `
+                    <input type="radio" id="q${index + 1}${i}" value="${option.value}" name="q${index + 1}">
+                    <label for="q${index + 1}${i}">${option.text}</label><br>
+                `).join('')}
+            `;
+            questionContainer.appendChild(questionDiv);
+        });
+
+        // Timer
+        let timeLeft = 300; // 5 minutes in seconds
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById("timer").textContent = `Time remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            if (timeLeft > 0) {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            } else {
+                document.getElementById("quizForm").submit();
+            }
+        }
+
+        updateTimer();
+
+        // Form submission
+        document.getElementById("quizForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let correctAnswers = 0;
+            let attempted = 0;
+
+            selectedQuestions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index + 1}"]:checked`);
+                if (selectedOption) {
+                    attempted++;
+                    if (selectedOption.value === "correct") {
+                        correctAnswers++;
+                    }
+                }
+            });
+
+            const totalQuestions = selectedQuestions.length;
+            document.getElementById("result").textContent = `You got ${correctAnswers} out of ${totalQuestions} correct!`;
+
+            // Display pie chart
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Correct', 'Incorrect', 'Not Attempted'],
+                    datasets: [{
+                        data: [correctAnswers, totalQuestions - correctAnswers, totalQuestions - attempted],
+                        backgroundColor: ['#28a745', '#dc3545', '#6c757d'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw + ' (' + Math.round((tooltipItem.raw / totalQuestions) * 100) + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

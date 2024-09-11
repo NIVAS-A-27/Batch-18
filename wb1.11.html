@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Tough Assessment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #quizForm {
+            width: 80%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #questionContainer {
+            margin-bottom: 20px;
+        }
+
+        .questionDiv {
+            background-color: #e9ecef;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.1em;
+            margin: 0 0 10px;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        label {
+            margin-bottom: 5px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        button {
+            background-color: #28a745;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1em;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #timer {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #dc3545;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #result {
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #pieChartContainer {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form id="quizForm">
+        <div>
+            <h1>DSA Tough Assessment</h1>
+            <div id="timer">Time remaining: 5:00</div>
+        </div>
+        <div id="questionContainer"></div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    <div id="result"></div>
+    <div id="pieChartContainer">
+        <canvas id="pieChart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const questions = [
+            {
+                question: "What is the time complexity of Binary Search on a sorted array?",
+                options: [
+                    { text: "O(log n)", value: "correct" },
+                    { text: "O(n)", value: "incorrect" },
+                    { text: "O(n log n)", value: "incorrect" }
+                ]
+            },
+            {
+                question: "Which data structure is used to implement a LRU Cache?",
+                options: [
+                    { text: "Hash Map and Doubly Linked List", value: "correct" },
+                    { text: "Binary Search Tree", value: "incorrect" },
+                    { text: "Stack", value: "incorrect" }
+                ]
+            },
+            {
+                question: "What is the worst-case time complexity of Quick Sort?",
+                options: [
+                    { text: "O(n^2)", value: "correct" },
+                    { text: "O(n log n)", value: "incorrect" },
+                    { text: "O(n)", value: "incorrect" }
+                ]
+            },
+            {
+                question: "What is the space complexity of a recursive function using a stack?",
+                options: [
+                    { text: "O(n)", value: "correct" },
+                    { text: "O(log n)", value: "incorrect" },
+                    { text: "O(1)", value: "incorrect" }
+                ]
+            },
+            {
+                question: "What is the primary advantage of using a Trie over a Hash Table?",
+                options: [
+                    { text: "Prefix-based search", value: "correct" },
+                    { text: "Faster insertion time", value: "incorrect" },
+                    { text: "Constant-time lookup", value: "incorrect" }
+                ]
+            },
+            {
+                question: "In a Min-Heap, what property must be maintained?",
+                options: [
+                    { text: "The key at a parent node is always less than or equal to the keys of its children", value: "correct" },
+                    { text: "The key at a parent node is always greater than or equal to the keys of its children", value: "incorrect" },
+                    { text: "The key at a parent node is always equal to the keys of its children", value: "incorrect" }
+                ]
+            },
+            {
+                question: "What is the space complexity of a graph represented using an adjacency matrix?",
+                options: [
+                    { text: "O(V^2)", value: "correct" },
+                    { text: "O(E + V)", value: "incorrect" },
+                    { text: "O(E^2)", value: "incorrect" }
+                ]
+            },
+            {
+                question: "Which sorting algorithm has the best worst-case time complexity?",
+                options: [
+                    { text: "Merge Sort", value: "correct" },
+                    { text: "Bubble Sort", value: "incorrect" },
+                    { text: "Insertion Sort", value: "incorrect" }
+                ]
+            },
+            {
+                question: "In a balanced binary search tree, what is the height of the tree?",
+                options: [
+                    { text: "O(log n)", value: "correct" },
+                    { text: "O(n)", value: "incorrect" },
+                    { text: "O(n log n)", value: "incorrect" }
+                ]
+            },
+            {
+                question: "What is the average time complexity of accessing an element in a Hash Table?",
+                options: [
+                    { text: "O(1)", value: "correct" },
+                    { text: "O(log n)", value: "incorrect" },
+                    { text: "O(n)", value: "incorrect" }
+                ]
+            },
+            {
+                question: "What is the time complexity of inserting an element into a balanced binary search tree?",
+                options: [
+                    { text: "O(log n)", value: "correct" },
+                    { text: "O(n)", value: "incorrect" },
+                    { text: "O(n log n)", value: "incorrect" }
+                ]
+            },
+            {
+                question: "Which data structure is used to implement Depth First Search (DFS)?",
+                options: [
+                    { text: "Stack", value: "correct" },
+                    { text: "Queue", value: "incorrect" },
+                    { text: "Priority Queue", value: "incorrect" }
+                ]
+            },
+            {
+                question: "What is the space complexity of Breadth First Search (BFS) in a graph?",
+                options: [
+                    { text: "O(V)", value: "correct" },
+                    { text: "O(E)", value: "incorrect" },
+                    { text: "O(V + E)", value: "incorrect" }
+                ]
+            }
+        ];
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const selectedQuestions = shuffle([...questions]).slice(0, 5);
+
+        const questionContainer = document.getElementById("questionContainer");
+        selectedQuestions.forEach((question, index) => {
+            const questionDiv = document.createElement("div");
+            questionDiv.className = 'questionDiv';
+            questionDiv.id = `q${index + 1}`;
+            questionDiv.innerHTML = `
+                <p>${question.question}</p>
+                ${question.options.map((option, i) => `
+                    <input type="radio" id="q${index + 1}${i}" value="${option.value}" name="q${index + 1}">
+                    <label for="q${index + 1}${i}">${option.text}</label><br>
+                `).join('')}
+            `;
+            questionContainer.appendChild(questionDiv);
+        });
+
+        let timeLeft = 300; // 5 minutes in seconds
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById("timer").textContent = `Time remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            if (timeLeft > 0) {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            } else {
+                document.getElementById("quizForm").submit();
+            }
+        }
+
+        updateTimer();
+
+        document.getElementById("quizForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let correctAnswers = 0;
+            let attempted = 0;
+
+            selectedQuestions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index + 1}"]:checked`);
+                if (selectedOption) {
+                    attempted++;
+                    if (selectedOption.value === "correct") {
+                        correctAnswers++;
+                    }
+                }
+            });
+
+            const totalQuestions = selectedQuestions.length;
+            document.getElementById("result").textContent = `You got ${correctAnswers} out of ${totalQuestions} correct!`;
+
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Correct', 'Incorrect', 'Not Attempted'],
+                    datasets: [{
+                        data: [correctAnswers, totalQuestions - correctAnswers, totalQuestions - attempted],
+                        backgroundColor: ['#28a745', '#dc3545', '#6c757d'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw + ' (' + Math.round((tooltipItem.raw / totalQuestions) * 100) + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
